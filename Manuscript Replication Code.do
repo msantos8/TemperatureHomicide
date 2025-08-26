@@ -1,5 +1,5 @@
 /*Code - A Cross-National Examination of the Effect of Temperature Change on Homicide Trends: A Macro-Level Test of the Temperature-Aggression Effect
-Version Date: April 24, 2024
+Version Date: November 26, 2024
 
 -World Bank's Climate Change Knowledge Portal (CCKP)
 https://climateknowledgeportal.worldbank.org/download-data
@@ -55,34 +55,34 @@ xtreg ln_HomRate c.Temp_Annual##c.Temp_Annual##c.GDP_PerCap SWIID_Gini Inflation
 // Panel A - Pooled Cross-Sectional Models
 reg ln_HomRate c.Temp_Annual GDP_PerCap SWIID_Gini Inflation InfantMort Unemployment Per15_29 PerMale PerUrban polity2 if esample == 1, cluster(eCountry)
 margins, at(Temp_Annual = (0(5)30)) expression(exp(predict(xb)))
-marginsplot
+marginsplot, noci
 
 reg ln_HomRate c.Temp_Annual##c.Temp_Annual GDP_PerCap SWIID_Gini Inflation InfantMort Unemployment Per15_29 PerMale PerUrban polity2 if esample == 1, cluster(eCountry)
 margins, at(Temp_Annual = (0(5)30)) expression(exp(predict(xb)))
-marginsplot
+marginsplot, noci
 
 // Panel B – Fixed Effects Models
 xtreg ln_HomRate c.Temp_Annual GDP_PerCap SWIID_Gini Inflation InfantMort Unemployment Per15_29 PerMale PerUrban polity2 if esample == 1, fe cluster(eCountry)
 margins, at(Temp_Annual = (0(5)30)) expression(exp(predict(xb)))
-marginsplot
+marginsplot, noci
 
 xtreg ln_HomRate c.Temp_Annual##c.Temp_Annual GDP_PerCap SWIID_Gini Inflation InfantMort Unemployment Per15_29 PerMale PerUrban polity2 if esample == 1, fe cluster(eCountry)
 margins, at(Temp_Annual = (0(5)30)) expression(exp(predict(xb)))
-marginsplot
+marginsplot, noci
 
 * Figure 4 - Predicted Homicide Rate by Temperature and GDP per Capita
 // Moderation GDP
 reg ln_HomRate c.Temp_Annual##c.Temp_Annual##c.GDP_PerCap SWIID_Gini Inflation InfantMort Unemployment Per15_29 PerMale PerUrban polity2 if esample == 1, cluster(eCountry)
 margins, at(Temp_Annual = (0(5)30) GDP_PerCap = ($val1 $val2 $val3)) expression(exp(predict(xb)))
-marginsplot
+marginsplot, noci
 
 xtreg ln_HomRate c.Temp_Annual##c.Temp_Annual##c.GDP_PerCap SWIID_Gini Inflation InfantMort Unemployment Per15_29 PerMale PerUrban polity2 if esample == 1, fe cluster(eCountry)
 margins, at(Temp_Annual = (0(5)30) GDP_PerCap = ($val1 $val2 $val3)) expression(exp(predict(xb)))
-marginsplot
+marginsplot, noci
 
 
 **# Other Figures
-// Note: Final manuscript figures were developed in excel
+// Note: Final manuscript figures were developed in Microsoft Excel
 
 **## Figure. Mean Land Temperature of the World and By Region – Observed from 1901 to 2021 And Forecasted from 2022 to 2100
 * World
@@ -177,6 +177,18 @@ gen esample_years = esample
 replace esample_years = 0 if Years < 10
 sum HomRate ln_HomRate Temp_Annual GDP_PerCap SWIID_Gini Inflation InfantMort Unemployment Per15_29 PerMale PerUrban polity2 if esample_years == 1, sep(0)
 
+
+**## Appendix. Two-Way Fixed Effects
+xtreg ln_HomRate Temp_Annual i.Year if esample == 1, fe cluster(eCountry)
+xtreg ln_HomRate Temp_Annual GDP_PerCap SWIID_Gini Inflation InfantMort Unemployment Per15_29 PerMale PerUrban polity2 i.Year if esample == 1, fe cluster(eCountry)
+xtreg ln_HomRate c.Temp_Annual##c.Temp_Annual i.Year if esample == 1, fe cluster(eCountry)
+xtreg ln_HomRate c.Temp_Annual##c.Temp_Annual GDP_PerCap SWIID_Gini Inflation InfantMort Unemployment Per15_29 PerMale PerUrban polity2 i.Year if esample == 1, fe cluster(eCountry)
+xtreg ln_HomRate c.Temp_Annual##c.Temp_Annual##c.GDP_PerCap SWIID_Gini Inflation InfantMort Unemployment Per15_29 PerMale PerUrban polity2 i.Year if esample == 1, fe cluster(eCountry)
+
+// Margins
+xtreg ln_HomRate c.Temp_Annual##c.Temp_Annual##c.GDP_PerCap SWIID_Gini Inflation InfantMort Unemployment Per15_29 PerMale PerUrban polity2 i.Year if esample == 1, fe cluster(eCountry)
+margins, at(Temp_Annual = (0(5)30) GDP_PerCap = ($val1 $val2 $val3)) expression(exp(predict(xb)))
+
 **## Appendix. Excluding Larger Countries
 xtreg ln_HomRate c.Temp_Annual if esample == 1 & Land2020 < 1000000, fe cluster(eCountry)
 xtreg ln_HomRate c.Temp_Annual GDP_PerCap SWIID_Gini Inflation InfantMort Unemployment Per15_29 PerMale PerUrban polity2 if esample == 1 & Land2020 < 1000000, fe cluster(eCountry)
@@ -193,13 +205,9 @@ gen esample_large = esample
 replace esample_large = 0 if Land2020 >= 1000000
 sum HomRate ln_HomRate Temp_Annual GDP_PerCap SWIID_Gini Inflation InfantMort Unemployment Per15_29 PerMale PerUrban polity2 if esample_large == 1, sep(0)
 
-**## Appendix. Two-Way Fixed Effects
-xtreg ln_HomRate Temp_Annual i.Year if esample == 1, fe cluster(eCountry)
-xtreg ln_HomRate Temp_Annual GDP_PerCap SWIID_Gini Inflation InfantMort Unemployment Per15_29 PerMale PerUrban polity2 i.Year if esample == 1, fe cluster(eCountry)
-xtreg ln_HomRate c.Temp_Annual##c.Temp_Annual i.Year if esample == 1, fe cluster(eCountry)
-xtreg ln_HomRate c.Temp_Annual##c.Temp_Annual GDP_PerCap SWIID_Gini Inflation InfantMort Unemployment Per15_29 PerMale PerUrban polity2 i.Year if esample == 1, fe cluster(eCountry)
-xtreg ln_HomRate c.Temp_Annual##c.Temp_Annual##c.GDP_PerCap SWIID_Gini Inflation InfantMort Unemployment Per15_29 PerMale PerUrban polity2 i.Year if esample == 1, fe cluster(eCountry)
 
-// Margins
-xtreg ln_HomRate c.Temp_Annual##c.Temp_Annual##c.GDP_PerCap SWIID_Gini Inflation InfantMort Unemployment Per15_29 PerMale PerUrban polity2 i.Year if esample == 1, fe cluster(eCountry)
-margins, at(Temp_Annual = (0(5)30) GDP_PerCap = ($val1 $val2 $val3)) expression(exp(predict(xb)))
+**## Appendix. By Land Area & Income Level
+xtreg ln_HomRate c.Temp_Annual##c.Temp_Annual SWIID_Gini Inflation InfantMort Unemployment Per15_29 PerMale PerUrban polity2 if esample == 1 & size_gdp == 1, fe cluster(eCountry)
+xtreg ln_HomRate c.Temp_Annual##c.Temp_Annual SWIID_Gini Inflation InfantMort Unemployment Per15_29 PerMale PerUrban polity2 if esample == 1 & size_gdp == 2, fe cluster(eCountry)
+xtreg ln_HomRate c.Temp_Annual##c.Temp_Annual SWIID_Gini Inflation InfantMort Unemployment Per15_29 PerMale PerUrban polity2 if esample == 1 & size_gdp == 3, fe cluster(eCountry)
+xtreg ln_HomRate c.Temp_Annual##c.Temp_Annual SWIID_Gini Inflation InfantMort Unemployment Per15_29 PerMale PerUrban polity2 if esample == 1 & size_gdp == 4, fe cluster(eCountry)
