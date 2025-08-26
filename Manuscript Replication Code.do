@@ -31,7 +31,7 @@ list Country Year $measure if ($measure == r(max) | $measure == r(min)) & esampl
 
 
 **# Models
-// Cross-sectional
+// Pooled Cross-sectional
 reg ln_HomRate Temp_Annual if esample == 1, cluster(eCountry)
 reg ln_HomRate Temp_Annual GDP_PerCap SWIID_Gini Inflation InfantMort Unemployment Per15_29 PerMale PerUrban polity2 if esample == 1, cluster(eCountry)
 reg ln_HomRate Temp_Annual SWIID_Gini if esample == 1, cluster(eCountry)
@@ -116,7 +116,6 @@ label var tas "Projected"
 // Graph
 twoway (line Temp_Annual Year, color(black)) (line tas Year if Year >= 2021, color(black) lpattern(shortdash)), ytitle("Mean Temperature (Celsius)") by(Region)
 
-
 **## Figure. Choropleth World Map of Average Temperature by Country
 // Reproduce the values only; The map was developed using MapChart at https://www.mapchart.net/world.html
 use "Manuscript Replication Data", clear
@@ -177,7 +176,6 @@ gen esample_years = esample
 replace esample_years = 0 if Years < 10
 sum HomRate ln_HomRate Temp_Annual GDP_PerCap SWIID_Gini Inflation InfantMort Unemployment Per15_29 PerMale PerUrban polity2 if esample_years == 1, sep(0)
 
-
 **## Appendix. Two-Way Fixed Effects
 xtreg ln_HomRate Temp_Annual i.Year if esample == 1, fe cluster(eCountry)
 xtreg ln_HomRate Temp_Annual GDP_PerCap SWIID_Gini Inflation InfantMort Unemployment Per15_29 PerMale PerUrban polity2 i.Year if esample == 1, fe cluster(eCountry)
@@ -204,7 +202,6 @@ margins, at(Temp_Annual = (0(5)30) GDP_PerCap = ($val1 $val2 $val3)) expression(
 gen esample_large = esample
 replace esample_large = 0 if Land2020 >= 1000000
 sum HomRate ln_HomRate Temp_Annual GDP_PerCap SWIID_Gini Inflation InfantMort Unemployment Per15_29 PerMale PerUrban polity2 if esample_large == 1, sep(0)
-
 
 **## Appendix. By Land Area & Income Level
 xtreg ln_HomRate c.Temp_Annual##c.Temp_Annual SWIID_Gini Inflation InfantMort Unemployment Per15_29 PerMale PerUrban polity2 if esample == 1 & size_gdp == 1, fe cluster(eCountry)
